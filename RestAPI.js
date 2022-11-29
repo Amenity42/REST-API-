@@ -1,40 +1,16 @@
 //Create Rest API for the application
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
-const {Sequelize, DataTypes, ValidationError} = require('sequelize');
-
-
-//Setup database
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: 'messages.db'
-})
+const {cors, auth} = require('./middleware');
+const {sequelize, Message} = require('./modles')
 
 //Test you have connected to the database
-
-
-//Create a model for the database
-const Message = sequelize.define('Message', {
-    // Model attributes are defined here
-    message: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
-    }
-});
-
-
 
 //Setup the express server
 let app = express();
 let port = process.env.PORT || 3000;
 
 //Check the server status and listen to the port
-app.use(express.json()); //!Tells express we are expecting JSON data
+app.use(cors, auth, express.json()); //!Tells express we are expecting JSON data & to use cors
 app.listen(port, async function() {
     await sequelize.sync();
     console.log('Server is running on port: ' + port);
